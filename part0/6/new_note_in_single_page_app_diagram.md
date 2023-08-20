@@ -1,8 +1,1 @@
-sequenceDiagram
-    participant browser
-    participant server
-
-    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
-    activate server
-    server-->>browser: the json file
-    deactivate server
+[![](https://mermaid.ink/img/pako:eNplkEFPwzAMhf9K5HPX3nPYiSsCaZxQpMkkLjVrk5A4G2jafyclhct8sj4_-8nvCjY4Ag2ZPgt5Sw-M7wkX41WtiEnYckQv6i2FS6Z0P6jwvPI22WS7_b5xrZ6fDi9qEolZD0OW4phyb3M_0ZzZn7gfeaAvXOJMGOPg6XL0QeiYI7aTaIXPKPTvtMLW76rP5qiVTKQ-cvBq5JmaytHdMnSwUFqQXf36usoM1M2FDOjaOkwnA8bfqg6LhMO3t6AlFeqgRFcvbQmBHnHOlZJjCemxxfibZgc1mNcQ_jS3H_JUfao?type=png)](https://mermaid.live/edit#pako:eNplkEFPwzAMhf9K5HPX3nPYiSsCaZxQpMkkLjVrk5A4G2jafyclhct8sj4_-8nvCjY4Ag2ZPgt5Sw-M7wkX41WtiEnYckQv6i2FS6Z0P6jwvPI22WS7_b5xrZ6fDi9qEolZD0OW4phyb3M_0ZzZn7gfeaAvXOJMGOPg6XL0QeiYI7aTaIXPKPTvtMLW76rP5qiVTKQ-cvBq5JmaytHdMnSwUFqQXf36usoM1M2FDOjaOkwnA8bfqg6LhMO3t6AlFeqgRFcvbQmBHnHOlZJjCemxxfibZgc1mNcQ_jS3H_JUfao)
