@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useEffect } from 'react'
+import axios from 'axios'
 
 
 const Filter = ({ filterPersons, searchName, handleSearchNameChanged }) => {
@@ -37,17 +39,14 @@ const Person = ({ person }) => {
   )
 }
 const Persons = ({ persons }) => {
-  let id = 0
   return (
     <div>
-      {persons.map(p => <Person key={id++} person={p} />)}
+      {persons.map(p => <Person key={p.id} person={p} />)}
     </div>
   )
 }
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '222-222-222' }
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchName, setSearchName] = useState('')
@@ -99,6 +98,16 @@ const App = () => {
   }
 
   const personsToShow = showAll ? persons : filterPersonsByNames()
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
 
   return (
     <div>
