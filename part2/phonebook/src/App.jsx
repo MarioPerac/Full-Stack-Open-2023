@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import axios from 'axios'
-
+import personService from './services/persons'
 
 const Filter = ({ filterPersons, searchName, handleSearchNameChanged }) => {
   return (
@@ -31,17 +31,18 @@ const PersonForm = ({ addPerson, newName, handleNameChanged, newNumber, handleNu
     </div>
   )
 }
-const Person = ({ person }) => {
+const Person = ({ person, onDelete }) => {
+
   return (
     <div>
-      <p >{person.name} {person.number}</p>
+      <p >{person.name} {person.number}  <button onClick={() => onDelete(person)}>delete</button> </p>
     </div>
   )
 }
-const Persons = ({ persons }) => {
+const Persons = ({ persons, onDelete }) => {
   return (
     <div>
-      {persons.map(p => <Person key={p.id} person={p} />)}
+      {persons.map(p => <Person key={p.id} person={p} onDelete={onDelete} />)}
     </div>
   )
 }
@@ -67,22 +68,41 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
+
     if (!isAddedPerson()) {
-      const person = {
+
+      const newPerson = {
         name: newName,
-        number: newNumber
+        number: newNumber,
       }
-      setPersons(persons.concat(person))
-      setNewName('')
-      setNewNumber('')
+      personService.create(newPerson).then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
     }
     else {
-      alert(newName + ' is already added to phonebook')
+
+      const person = persons.find(p => p.name === newName)
+      console.log("osoba: ", person)
+      let copyPerson = { ...person }
+      console.log(copyPerson)
+      if (person.number !== newNumber && window.confirm(newName + ' is already added to phonebook, replace the old number with a new one ?')) {
+        copyPerson.number = newNumber
+        personService
+          .update(person.id, copyPerson)
+          .then(returnedPerson =>
+            setPersons(persons.map(p => p.id !== returnedPerson.id ? p : returnedPerson))
+          )
+      }
+      else
+        alert(newName + ' is already added to phonebook')
     }
   }
 
   const isAddedPerson = () => {
     const result = persons.some(person => person.name === newName)
+
     return result
   }
 
@@ -101,13 +121,20 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
+
+  const deletePerson = (person) => {
+    if (window.confirm('Delete ' + person.name + ' ?')) {
+      personService.deleteById(person.id).then(response => {
+        setPersons(persons.filter(p => p !== person))
+      })
+    }
+  }
 
   return (
     <div>
@@ -117,7 +144,7 @@ const App = () => {
       <PersonForm addPerson={addPerson} newName={newName} handleNameChanged={handleNameChanged} newNumber={newNumber} handleNumberChanged={handleNumberChanged} />
       <h3>Numbers</h3>
       <div>
-        <Persons persons={personsToShow} />
+        <Persons persons={personsToShow} onDelete={deletePerson} />
       </div>
     </div>
   )
