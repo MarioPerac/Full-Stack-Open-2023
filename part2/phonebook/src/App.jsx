@@ -46,12 +46,37 @@ const Persons = ({ persons, onDelete }) => {
     </div>
   )
 }
+
+const Notification = ({ message, notificationColor }) => {
+
+  const messageStyle =
+  {
+    color: notificationColor,
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+
+  }
+  if (message === null) {
+    return null
+  }
+  else {
+    return (<div style={messageStyle}>
+      {message}
+    </div>)
+  }
+}
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchName, setSearchName] = useState('')
   const [showAll, setShowAll] = useState(true)
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const handleNameChanged = (event) => {
     setNewName(event.target.value)
@@ -79,6 +104,11 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        setSuccessMessage('Added ' + newName)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 3000)
+
       })
     }
     else {
@@ -94,9 +124,19 @@ const App = () => {
           .then(returnedPerson =>
             setPersons(persons.map(p => p.id !== returnedPerson.id ? p : returnedPerson))
           )
+        setSuccessMessage('A number is changed')
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 3000)
+
       }
-      else
-        alert(newName + ' is already added to phonebook')
+      else {
+        setErrorMessage(newName + ' is already added to phonebook')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 3000)
+
+      }
     }
   }
 
@@ -132,6 +172,16 @@ const App = () => {
     if (window.confirm('Delete ' + person.name + ' ?')) {
       personService.deleteById(person.id).then(response => {
         setPersons(persons.filter(p => p !== person))
+
+        setSuccessMessage('Person: ' + person.name + ' deleted')
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 3000)
+      }).catch(error => {
+        setErrorMessage('Information of ' + person.name + 'has already been removed from server')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 3000)
       })
     }
   }
@@ -139,6 +189,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} notificationColor={'green'} />
+      <Notification message={errorMessage} notificationColor={'red'} />
       <Filter filterPersons={filterPersons} searchName={searchName} handleSearchNameChanged={handleSearchNameChanged} />
       <h3>add a new</h3>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChanged={handleNameChanged} newNumber={newNumber} handleNumberChanged={handleNumberChanged} />
