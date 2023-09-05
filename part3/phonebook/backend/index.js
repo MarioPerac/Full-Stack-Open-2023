@@ -90,7 +90,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
         .catch(error => next(error))
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
 
     if (!req.body.name) {
         return res.status(400).json({
@@ -110,6 +110,7 @@ app.post('/api/persons', (req, res) => {
     person.save().then(savedPerson => {
         res.json(savedPerson)
     })
+        .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
@@ -118,7 +119,7 @@ app.put('/api/persons/:id', (req, res, next) => {
     const person = { name: body.name, number: body.number }
 
     Person
-        .findByIdAndUpdate(req.params.id, person, { new: true })
+        .findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true, context: 'query' })
         .then(updatedNote => {
             res.json(updatedNote)
         })
