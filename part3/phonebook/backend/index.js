@@ -58,9 +58,8 @@ app.use(morgan(function (tokens, req, res) {
 // })
 
 app.get('/api/persons', (req, res) => {
-    // const allPersons = []
     Person.find({}).then(persons => {
-        const allPersons = { ...persons }
+        const allPersons = [...persons]
         res.json(allPersons)
     })
 
