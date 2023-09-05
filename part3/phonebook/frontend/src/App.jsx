@@ -100,16 +100,25 @@ const App = () => {
         name: newName,
         number: newNumber,
       }
-      personService.create(newPerson).then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
-        setNewName('')
-        setNewNumber('')
-        setSuccessMessage('Added ' + newName)
-        setTimeout(() => {
-          setSuccessMessage(null)
-        }, 3000)
+      personService
+        .create(newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+          setSuccessMessage('Added ' + newName)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 3000)
 
-      })
+        })
+        .catch(error => {
+          console.log(error.response.data.error)
+          setErrorMessage(error.response.data)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 4000)
+        })
     }
     else {
 
@@ -121,13 +130,21 @@ const App = () => {
         copyPerson.number = newNumber
         personService
           .update(person.id, copyPerson)
-          .then(returnedPerson =>
+          .then(returnedPerson => {
             setPersons(persons.map(p => p.id !== returnedPerson.id ? p : returnedPerson))
+            setSuccessMessage('A number is changed')
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 3000)
+          }
           )
-        setSuccessMessage('A number is changed')
-        setTimeout(() => {
-          setSuccessMessage(null)
-        }, 3000)
+          .catch(error => {
+            setErrorMessage(error.response.data.error)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 4000)
+          })
+
 
       }
       else {
